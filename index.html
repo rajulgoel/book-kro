@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book-kro - Movie Booking</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Book movie tickets online with Book-kro. Discover the latest movies, check showtimes, and book your favorite movies easily.">
+    <meta name="keywords" content="movie booking, cinema tickets, movie showtimes, book tickets online">
+    <meta name="author" content="Book-kro">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Book-kro - Movie Booking">
+    <meta property="og:description" content="Book movie tickets online easily. Discover latest movies and book your favorite shows.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://book-kro.vercel.app">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Book-kro - Movie Booking">
+    <meta name="twitter:description" content="Book movie tickets online easily">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/darkMode.svg">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://api.themoviedb.org">
+    <link rel="preconnect" href="https://image.tmdb.org">
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    
+    <!-- DNS Prefetch for better performance -->
+    <link rel="dns-prefetch" href="//api.themoviedb.org">
+    <link rel="dns-prefetch" href="//image.tmdb.org">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="css/styles.css" as="style">
+    <link rel="preload" href="js/app.js" as="script">
+    
+    <!-- Critical CSS for faster loading -->
+    <style>
+        /* Critical CSS for immediate display */
+        .loading-skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Prevent layout shift */
+        .movie-card-skeleton {
+            aspect-ratio: 2/3;
+            border-radius: 0.5rem;
+        }
+        
+        /* Smooth theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Enhanced focus styles for accessibility */
+        .focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        /* Loading overlay */
+        #loading-overlay {
+            backdrop-filter: blur(8px);
+        }
+    </style>
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { 
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(100%)' },
+                            '100%': { transform: 'translateY(0)' }
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-sans transition-colors min-h-screen">
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white/90 dark:bg-gray-900/90 z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-lg font-medium">Loading Book-kro...</p>
+            <p class="text-sm text-gray-500 mt-2">Preparing your movie experience</p>
+        </div>
+    </div>
+    
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded z-50">
+        Skip to main content
+    </a>
+    
+
+    
+    <div id="app" class="opacity-0 transition-opacity duration-500">
+        <header id="header" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 p-4 transition-colors sticky top-0 z-40 shadow-sm"></header>
+        
+        <main id="main-content" class="container mx-auto px-4 py-6 max-w-7xl">
+            <!-- Error boundary -->
+            <div id="error-boundary" class="hidden bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <div class="text-red-600 dark:text-red-400 mr-3">⚠️</div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-red-800 dark:text-red-200">Something went wrong</h3>
+                        <p id="error-message" class="text-sm text-red-600 dark:text-red-400 mt-1"></p>
+                        <button id="retry-button" class="mt-2 text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors">
+                            Try Again
+                        </button>
+                    </div>
+                    <button id="close-error" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="search-container"></div>
+            
+            <section id="upcoming-movies" class="animate-fade-in">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Discover Movies</h2>
+                <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4"></div>
+                <div id="pagination" class="mt-8"></div>
+            </section>
+            
+            <div id="bookings-container" class="hidden animate-fade-in">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6">My Bookings</h2>
+                <div id="bookings-list"></div>
+            </div>
+        </main>
+        
+
+    </div>
+    
+
+    
+
+    
+
+    
+    <script src="js/api.js"></script>
+    <script src="js/header.js"></script>
+    <script src="js/movieCard.js"></script>
+    <script src="js/pagination.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/movieModal.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/debug.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeErrorBtn = document.getElementById('close-error');
+            
+            if (closeErrorBtn) {
+                closeErrorBtn.addEventListener('click', () => {
+                    document.getElementById('error-boundary').classList.add('hidden');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
