@@ -42,7 +42,7 @@ function showPaymentModal(movie, bookingState) {
                         <div class="flex-1 text-center">
                             <p class="text-gray-600 dark:text-gray-400 mb-4">Scan QR code to pay</p>
                             <div class="flex justify-center mb-4">
-                                <img src="assets/qr.svg" alt="Payment QR Code" class="w-48 h-48 md:w-56 md:h-56 border-2 border-gray-200 dark:border-gray-600 rounded-lg">
+                                <img src="assets/qr.jpg" alt="Payment QR Code" class="w-48 h-48 md:w-56 md:h-56 border-2 border-gray-200 dark:border-gray-600 rounded-lg">
                             </div>
                             <p class="text-sm text-gray-500 dark:text-gray-400">Use any UPI app to scan and pay ₹${total}</p>
                         </div>
